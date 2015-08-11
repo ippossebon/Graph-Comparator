@@ -147,4 +147,25 @@ public class Graph {
 		}
 	}
 	
+	public void graphToDFSTree(){
+		ArrayList<Integer> stack = new ArrayList<Integer>();
+		int root = 0;
+		stack.add(root);
+		Node tree = new Node(root);
+		
+		while (root < this.numb_nodes){
+			for (int i = 0; i < this.numb_nodes; i++){
+				if (this.adjacency_matrix[root][i] == 1){
+					// There is a connection. Let's consider it as a child.
+					stack.add(i);
+					Node node = new Node(root, i);
+					root = i;
+				}
+			}
+			root++;
+		}
+		
+	}
+    
+	
 }
