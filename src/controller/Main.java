@@ -31,12 +31,20 @@ public class Main {
 		comparator.myCompare(parser.getPeople().get(12).getDirected_graph(), parser.getPeople().get(12).getUndirected_graph());
 		System.out.println("-----------------");
 		*/
-		
+		/*
 		for (int i = 0; i < (int) parser.getGraphs().size() - 1; i++){
 			int degree = comparator.twoStepsCompare(parser.getGraphs().get(i),  parser.getGraphs().get(i+1));
 			
 			if (degree > 2){
 				System.out.println("Comparison between " + i + " and " + i+1 + " --> Similarity degree: " + degree);
+			}
+		}
+		*/
+		
+		for (int i = 0; i < (int) parser.getGraphs().size() - 1; i++){
+			double degree = comparator.graphDistance(parser.getGraphs().get(i), parser.getGraphs().get(i+1));
+			if (degree > 0){
+				System.out.println("Comparison between " + i + " and " + (i+1) + " --> Similarity degree: " + degree);
 			}
 		}
 	}

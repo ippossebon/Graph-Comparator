@@ -167,5 +167,16 @@ public class Graph {
 		
 	}
     
-	
+	public ArrayList<String> getNodeConnectionsNames(int index){
+		ArrayList<Integer> connections = new ArrayList<Integer>();
+		ArrayList<String> connections_names = new ArrayList<String>();
+		connections = this.getNodeConnections(index);
+		
+		// Get all connections names.
+		for (Integer c : connections){
+			connections_names.add(this.getNameFromIndex(c));
+		}
+		return connections_names;
+	}
 }
+
