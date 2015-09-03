@@ -61,4 +61,8 @@ public class Node {
 	public void setParent_index(int parent_index) {
 		this.parent_index = parent_index;
 	}
+	
+	public void addChild(Node child){
+		this.children.add(child);
+	}
 }

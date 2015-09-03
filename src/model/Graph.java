@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 public class Graph {
 	private int adjacency_matrix[][];
-	private int links[][];
+	private int edges[][];
 	private String nodes[][];
-	private int numb_links;
+	private int numb_edges;
 	private int numb_nodes;
-	// links corresponds to the set of links of a graph, where [i][0] is the source and [i][1], target.
+	// edges corresponds to the set of edges of a graph, where [i][0] is the source and [i][1], target.
 	// nodes corresponds to the set of nodes of a graph, where [i][0] = node name, [i][1] = node type, and i = node index.
 	
 	public Graph(){
-		this.setLinks(new int[15][2]);
+		this.setEdges(new int[15][2]);
 		this.setNodes(new String[15][2]);
-		this.setNumb_links(0);
+		this.setNumbEdges(0);
 		this.setNumb_nodes(0);
 	}
 
@@ -39,18 +39,18 @@ public class Graph {
 	public void createAdjacencyMatrix(){
 		initializeMatrix();
 		
-		for (int i = 0; i < this.numb_links; i++){
-			int source = this.links[i][0];
-			int target = this.links[i][1];
+		for (int i = 0; i < this.numb_edges; i++){
+			int source = this.edges[i][0];
+			int target = this.edges[i][1];
 			
 			this.adjacency_matrix[source][target] = 1;
 		}
 	}
 
-	public void addNewLink(int source, int target){	
-		this.links[this.numb_links][0] = source;
-		this.links[this.numb_links][1] = target;
-		this.numb_links++;
+	public void addNewEdge(int source, int target){	
+		this.edges[this.numb_edges][0] = source;
+		this.edges[this.numb_edges][1] = target;
+		this.numb_edges++;
 	}
 	
 	public void addNewNode(int index, String name, String type){
@@ -60,11 +60,11 @@ public class Graph {
 	}
 	
 	public int[][] getLinks() {
-		return this.links;
+		return this.edges;
 	}
 
-	public void setLinks(int links[][]) {
-		this.links = links;
+	public void setEdges(int links[][]) {
+		this.edges = links;
 	}
 
 	public String[][] getNodes() {
@@ -75,12 +75,12 @@ public class Graph {
 		this.nodes = nodes;
 	}
 
-	public int getNumb_links() {
-		return this.numb_links;
+	public int getNumbEdges() {
+		return this.numb_edges;
 	}
 
-	public void setNumb_links(int numb_links) {
-		this.numb_links = numb_links;
+	public void setNumbEdges(int numb_links) {
+		this.numb_edges = numb_links;
 	}
 	
 	public int getNumb_nodes(){
@@ -93,12 +93,12 @@ public class Graph {
 
 
 	public void printInfo(){
-		System.out.println("Number of links: " + this.numb_links);
+		System.out.println("Number of links: " + this.numb_edges);
 		System.out.println("Number of nodes: " + this.numb_nodes);
 		
 		System.out.println("Links: ");
-		for (int i = 0; i < this.numb_links; i++){
-			System.out.println("Source: " + this.links[i][0] + " Target: " + this.links[i][1]);
+		for (int i = 0; i < this.numb_edges; i++){
+			System.out.println("Source: " + this.edges[i][0] + " Target: " + this.edges[i][1]);
 		}
 		
 		System.out.println("Nodes: ");
@@ -118,7 +118,7 @@ public class Graph {
 	
 	public ArrayList<Integer> getNodeConnections(int index){
 		ArrayList<Integer> connections = new ArrayList<Integer>();
-		if (this.numb_links == 0){
+		if (this.numb_edges == 0){
 			return null;
 		}
 		for (int i = 0; i < this.numb_nodes; i++){
@@ -147,24 +147,58 @@ public class Graph {
 		}
 	}
 	
+	public int getVertexIndexFromName(String name){
+		for (int i = 0 ; i < this.numb_nodes; i++){
+			if (this.nodes[i][0].equals(name)){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	public void graphToDFSTree(){
 		ArrayList<Integer> stack = new ArrayList<Integer>();
 		int root = 0;
+		int visited_nodes[] = new int[this.numb_nodes];
 		stack.add(root);
 		Node tree = new Node(root);
 		
+		/*
 		while (root < this.numb_nodes){
 			for (int i = 0; i < this.numb_nodes; i++){
 				if (this.adjacency_matrix[root][i] == 1){
 					// There is a connection. Let's consider it as a child.
 					stack.add(i);
 					Node node = new Node(root, i);
+					tree.addChild(node);
 					root = i;
 				}
 			}
 			root++;
 		}
+		*/
 		
+	}
+	
+	public void testDFS(){
+		int visited_nodes[] = new int[this.numb_nodes];
+		
+		for (int i = 0; i < this.numb_nodes; i++){
+			System.out.println(this.getNameFromIndex(i));
+			//this.dfs(i, visited_nodes);
+		}
+		
+	}
+	
+	private void dfs(int node, int visited_nodes[]){
+		visited_nodes[node] = 1;
+		int i = 0;
+		for (i = 0; i < this.numb_nodes; i++){
+			if(this.adjacency_matrix[node][i] == 1 && (visited_nodes[i] == 0)){
+				System.out.println(this.getNameFromIndex(i));
+				dfs(i, visited_nodes);
+			}
+		}
 	}
     
 	public ArrayList<String> getNodeConnectionsNames(int index){
@@ -178,5 +212,92 @@ public class Graph {
 		}
 		return connections_names;
 	}
+	
+	private int countConnections(int index){
+		int count = 0;
+		for (int i = 0; i < this.numb_nodes; i++){
+			for (int j = 0; j < this.numb_nodes; j++){
+				if (this.adjacency_matrix[i][j] == 1){
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+	
+	public double[] calculatePageRank(){
+		double[] previous_pagerank = new double[this.numb_nodes];
+		double[] current_pagerank = new double[this.numb_nodes];
+		
+		// Initialize
+		for (int i = 0; i < this.numb_nodes; i++){
+			previous_pagerank[i] = (double)1/this.numb_nodes;
+			current_pagerank[i] = (double)1/this.numb_nodes;
+		}
+		double lambda = 0.85; // Suggested value
+		double sum;
+		double count = 0;
+		
+		for (int iterations = 0; iterations < 10; iterations++){
+			previous_pagerank = current_pagerank.clone();
+			// Calculates the pagerank for each vertex
+			for (int i = 0; i < this.numb_nodes; i++){
+				sum = 0;
+				count = 0;
+				for (int j = 0; j < this.numb_nodes; j++){
+					if (this.adjacency_matrix[j][i] == 1){
+						sum += (double)previous_pagerank[j];
+						count++;
+					}
+				}
+				if (count == 0){
+					current_pagerank[i] = (double)(1 - lambda)/this.numb_nodes;
+				}
+				else{
+					current_pagerank[i] = (double)(1 - lambda)/this.numb_nodes + (double)(lambda * (sum/count));
+				}
+			}
+			iterations++;
+		}
+		return current_pagerank;
+	}
+	
+	public double[] calculateVectorPageRank(ArrayList<Integer> vector){
+		double[] previous_pagerank = new double[vector.size()];
+		double[] current_pagerank = new double[vector.size()];
+		
+		// Initialize
+		for (int i = 0; i < vector.size(); i++){
+			previous_pagerank[i] = (double)1/this.numb_nodes;
+			current_pagerank[i] = (double)1/this.numb_nodes;
+		}
+		double lambda = 0.85; // Suggested value
+		double sum;
+		double count = 0;
+		
+		for (int iterations = 0; iterations < 10; iterations++){
+			previous_pagerank = current_pagerank.clone();
+			// Calculates the pagerank for each vertex
+			for (Integer i : vector){
+				sum = 0;
+				count = 0;
+				for (int j = 0; j < this.numb_nodes; j++){
+					if (this.adjacency_matrix[j][i] == 1){
+						sum += (double)previous_pagerank[j];
+						count++;
+					}
+				}
+				if (count == 0){
+					current_pagerank[i] = (double)(1 - lambda)/this.numb_nodes;
+				}
+				else{
+					current_pagerank[i] = (double)(1 - lambda)/this.numb_nodes + (double)(lambda * (sum/count));
+				}
+			}
+			iterations++;
+		}
+		return current_pagerank;
+	}
+	
 }
 

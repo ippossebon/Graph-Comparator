@@ -49,7 +49,7 @@ public class JSONGraphParser {
 		
 							for (int i = 0; i < links_array.length(); i++){
 								JSONObject link = (JSONObject) links_array.get(i);
-								directed_graph.addNewLink(link.getInt("source"), link.getInt("target"));
+								directed_graph.addNewEdge(link.getInt("source"), link.getInt("target"));
 							}
 							this.graphs.add(directed_graph);
 							person.setDirected_graph(directed_graph);
@@ -63,7 +63,7 @@ public class JSONGraphParser {
 							
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
-							System.out.println("ATENÇAO: Item sem links.");
+							System.out.println("Exception - Item with no links.");
 						}
         				person.setDirected_graph(directed_graph);
         				
@@ -75,7 +75,7 @@ public class JSONGraphParser {
 		
 							for (int i = 0; i < links_array.length(); i++){
 								JSONObject link = (JSONObject) links_array.get(i);
-								undirected_graph.addNewLink(link.getInt("source"), link.getInt("target"));
+								undirected_graph.addNewEdge(link.getInt("source"), link.getInt("target"));
 							}
 							this.graphs.add(undirected_graph);
 							person.setUndirected_graph(undirected_graph);
