@@ -18,36 +18,36 @@ public class ApplicationFrame extends JFrame {
 	private JPanel contentPane;
 
 	public ApplicationFrame(JTable t1, JTable t2, JTable t3) {
-		setBounds(100, 100, 847, 552);
+		setBounds(100, 100, 901, 459);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JLabel lblDirected = new JLabel("Results for directed networks:");
-		lblDirected.setBounds(5, 21, 215, 16);
+		lblDirected.setBounds(5, 21, 881, 16);
 		contentPane.add(lblDirected);
 		table_directed_networks = t1;
 		JScrollPane scroll_simple_comparison = new JScrollPane(table_directed_networks);
-		scroll_simple_comparison.setBounds(5, 49, 806, 100);
+		scroll_simple_comparison.setBounds(5, 49, 881, 100);
 		scroll_simple_comparison.setPreferredSize(new Dimension(200, 100));
 		getContentPane().add(scroll_simple_comparison);
 		
 		JLabel lblNewLabel = new JLabel("Results for undirected networks:");
-		lblNewLabel.setBounds(5, 161, 294, 16);
+		lblNewLabel.setBounds(5, 161, 881, 16);
 		contentPane.add(lblNewLabel);
 		table_undirected_networks = t2;
 		JScrollPane scroll_2steps_comparison = new JScrollPane(table_undirected_networks);
-		scroll_2steps_comparison.setBounds(5, 180, 806, 100);
+		scroll_2steps_comparison.setBounds(5, 180, 881, 100);
 		scroll_2steps_comparison.setPreferredSize(new Dimension(200, 100));
 		getContentPane().add(scroll_2steps_comparison);
 		
-		JLabel lblBigNetworks = new JLabel("Big networks");
-		lblBigNetworks.setBounds(5, 292, 130, 16);
+		JLabel lblBigNetworks = new JLabel("Results for big networks:");
+		lblBigNetworks.setBounds(5, 292, 881, 16);
 		contentPane.add(lblBigNetworks);
 		table_big_networks = t3;
 		JScrollPane scrollPane = new JScrollPane(table_big_networks);
-		scrollPane.setBounds(5, 320, 806, 100);
+		scrollPane.setBounds(5, 320, 881, 100);
 		scrollPane.setPreferredSize(new Dimension(200, 100));
 		getContentPane().add(scrollPane);
 		

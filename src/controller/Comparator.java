@@ -242,7 +242,7 @@ public class Comparator {
 		double sum = 0;
 		double score = 0;
 		double ranking_factor = 0;
-		double normalization_factor = 1; // -5 is the maximum value
+		double normalization_factor = 1; // -5 is the maximum value (approx.)
 		int vertex = -1;
 		int index_in_array = -1;
 		
@@ -285,8 +285,8 @@ public class Comparator {
 			}
 			
 		}
-		sum = (double)sum/normalization_factor;
-		degree = (double)1 - (2 * sum);
+		sum = (double)2 * sum;
+		degree = (double)1 - (sum/normalization_factor);
 		return degree;
 	}
 	
@@ -377,9 +377,6 @@ public class Comparator {
 		double sum = 0; // Sum for all edges in both graphs.
 		int[][] g1_edges = g1.getEdges();
 		int[][] g2_edges = g2.getEdges();
-		
-	
-		
 		
 		return degree;
 	}
