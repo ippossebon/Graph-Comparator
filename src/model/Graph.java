@@ -266,12 +266,12 @@ public class Graph {
 		return current_pagerank;
 	}
 	
-	public double[] calculateVectorPageRank(ArrayList<Integer> vector){
-		double[] previous_pagerank = new double[vector.size()];
-		double[] current_pagerank = new double[vector.size()];
+	public double[] calculateVectorPageRank(ArrayList<Integer> nodes){
+		double[] previous_pagerank = new double[nodes.size()];
+		double[] current_pagerank = new double[nodes.size()];
 		
 		// Initialize
-		for (int i = 0; i < vector.size(); i++){
+		for (int i = 0; i < nodes.size(); i++){
 			previous_pagerank[i] = (double)1/this.numb_nodes;
 			current_pagerank[i] = (double)1/this.numb_nodes;
 		}
@@ -282,7 +282,7 @@ public class Graph {
 		for (int iterations = 0; iterations < 10; iterations++){
 			previous_pagerank = current_pagerank.clone();
 			// Calculates the pagerank for each vertex
-			for (Integer i : vector){
+			for (Integer i : nodes){
 				sum = 0;
 				count = 0;
 				for (int j = 0; j < this.numb_nodes; j++){
@@ -337,7 +337,6 @@ public class Graph {
 				}
 			}
 		}
-		
 		return false;
 	}
 }

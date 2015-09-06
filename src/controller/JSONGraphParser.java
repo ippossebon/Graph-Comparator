@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import model.Graph;
+import model.Network;
 import model.Person;
 
 import org.json.JSONArray;
@@ -17,10 +18,12 @@ import org.json.JSONObject;
 public class JSONGraphParser {
 	private ArrayList<Graph> graphs;
 	private ArrayList<Person> people;
+	private ArrayList<Network> networks;
 	
 	public JSONGraphParser(){
 		this.graphs = new ArrayList<Graph>();
 		this.people = new ArrayList<Person>();
+		this.networks = new ArrayList<Network>();
 	}
 	
 	public void execute(){
@@ -110,6 +113,65 @@ public class JSONGraphParser {
     		}
 	}
 	
+	public void executeBigNetworks(){
+		BufferedReader br = null;
+		String sCurrentLine;
+    	try {
+   			br = new BufferedReader(new FileReader("/Users/Isadora/Documents/RUG/Research Project/Data/data/data.json"));
+   				
+   			// Read each line of the file as a JSON object.
+    		while ((sCurrentLine = br.readLine()) != null) {
+    			JSONObject obj = new JSONObject(sCurrentLine);
+    			Iterator<String> keys_iterator = obj.keys();
+    				
+    			while (keys_iterator.hasNext()){
+    				String first_key = (String)keys_iterator.next();
+    				JSONArray o = obj.getJSONArray(first_key);
+    				JSONObject graph_object = o.getJSONObject(0);
+    				
+    				
+    				// Gets all links and nodes of the directed graph.
+    				Network g = new Network(first_key);
+    				try {
+						JSONArray links_array = graph_object.getJSONArray("links");
+	
+						for (int i = 0; i < links_array.length(); i++){
+							JSONObject link = (JSONObject) links_array.get(i);
+							g.addNewEdge(link.getInt("source"), link.getInt("target"));
+						}
+						
+						JSONArray nodes_array = graph_object.getJSONArray("nodes");
+						
+						for (int i = 0; i < nodes_array.length(); i++){
+							JSONObject node = (JSONObject) nodes_array.get(i);
+							g.addNewNode(node.getInt("index"), node.getString("name"), node.getString("type"));
+						}
+						
+						this.networks.add(g);
+    				}
+    				catch(JSONException e){
+    					System.out.println("Exception: item with no links.");
+    				}
+    				
+    			}
+    				
+    		}	
+    	}
+    	catch (IOException e) {
+    		e.printStackTrace();
+    	} catch (Exception e1){
+    		e1.printStackTrace();
+    	}
+    	finally {
+    		try {
+    			if (br != null)
+    				br.close();
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		}
+    	}
+	}
+	
 	public void printGraphsInfo(ArrayList<Graph> graphs){
 		for (Graph g : graphs){
 			g.printInfo();
@@ -122,5 +184,9 @@ public class JSONGraphParser {
 	
 	public ArrayList<Person> getPeople(){
 		return this.people;
+	}
+	
+	public ArrayList<Network> getNetworks(){
+		return this.networks;
 	}
 }

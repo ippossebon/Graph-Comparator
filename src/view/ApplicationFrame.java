@@ -14,10 +14,11 @@ public class ApplicationFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private static JTable table_directed_networks;
 	private static JTable table_undirected_networks;
+	private static JTable table_big_networks;
 	private JPanel contentPane;
 
-	public ApplicationFrame(JTable t1, JTable t2) {
-		setBounds(100, 100, 847, 440);
+	public ApplicationFrame(JTable t1, JTable t2, JTable t3) {
+		setBounds(100, 100, 847, 552);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -41,7 +42,15 @@ public class ApplicationFrame extends JFrame {
 		scroll_2steps_comparison.setPreferredSize(new Dimension(200, 100));
 		getContentPane().add(scroll_2steps_comparison);
 		
+		JLabel lblBigNetworks = new JLabel("Big networks");
+		lblBigNetworks.setBounds(5, 292, 130, 16);
+		contentPane.add(lblBigNetworks);
+		table_big_networks = t3;
+		JScrollPane scrollPane = new JScrollPane(table_big_networks);
+		scrollPane.setBounds(5, 320, 806, 100);
+		scrollPane.setPreferredSize(new Dimension(200, 100));
+		getContentPane().add(scrollPane);
+		
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);	
 	}
-	
 }

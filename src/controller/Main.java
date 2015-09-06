@@ -134,7 +134,43 @@ public class Main {
 		
 		undirected_networks_table.setModel(dft_undirected);
 		
-		frame = new ApplicationFrame(directed_networks_table, undirected_networks_table);
+		/* Big networks */
+		parser.executeBigNetworks();
+		JTable big_networks_table = new JTable();
+		DefaultTableModel dft = new DefaultTableModel();
+		
+		for (Graph g : parser.getNetworks()){
+			g.createAdjacencyMatrix();
+		}
+		
+		ArrayList<String> nets1 = new ArrayList<String>();
+		ArrayList<String> nets2 = new ArrayList<String>();
+		ArrayList<Double> results_simple_compare = new ArrayList<Double>();
+		ArrayList<Double> results_two_steps = new ArrayList<Double>();
+		ArrayList<Double> results_graph_distance = new ArrayList<Double>();
+		ArrayList<Double> results_vertex_ranking = new ArrayList<Double>();
+		
+		for (int i = 0; i < (int)parser.getNetworks().size() -1; i++){
+			nets1.add(parser.getNetworks().get(i).getId());
+			nets2.add(parser.getNetworks().get(i+1).getId());
+			degree = comparator.myCompare(parser.getNetworks().get(i), parser.getNetworks().get(i+1));
+			results_simple_compare.add(degree);
+			degree = comparator.twoStepsComparison(parser.getNetworks().get(i), parser.getNetworks().get(i+1));
+			results_two_steps.add(degree);
+			degree = comparator.graphDistance(parser.getNetworks().get(i), parser.getNetworks().get(i+1));
+			results_graph_distance.add(degree);
+			degree = comparator.vertexRankingComparison(parser.getNetworks().get(i), parser.getNetworks().get(i+1));
+			results_vertex_ranking.add(degree);
+		}	
+		dft.addColumn("Network 1", nets1.toArray());
+		dft.addColumn("Network 2", nets2.toArray());
+		dft.addColumn("Simple comparison", results_simple_compare.toArray());
+		dft.addColumn("Two steps comparison", results_two_steps.toArray());
+		dft.addColumn("Graph distance", results_graph_distance.toArray());
+		dft.addColumn("Vertex ranking", results_vertex_ranking.toArray());
+		big_networks_table.setModel(dft);
+		
+		frame = new ApplicationFrame(directed_networks_table, undirected_networks_table, big_networks_table);
 		frame.setVisible(true);
 		
 	}
