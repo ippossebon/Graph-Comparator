@@ -23,7 +23,6 @@ public class Main {
 		ArrayList<String> graphs1 = new ArrayList<String>();
 		ArrayList<String> graphs2 = new ArrayList<String>();
 		
-		
 		Comparator comparator = new Comparator();
 		JTable directed_networks_table = new JTable();
 		JTable undirected_networks_table = new JTable();
@@ -31,7 +30,6 @@ public class Main {
 		DefaultTableModel dft_undirected = new DefaultTableModel();
 		
 		/***** Directed networks ******/
-		/* Simple comparison */
 		double degree = 0;
 		ArrayList<Double> simple_comparison_results = new ArrayList<Double>();
 		ArrayList<Double> two_steps_comparison_results = new ArrayList<Double>();

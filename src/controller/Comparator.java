@@ -233,7 +233,6 @@ public class Comparator {
 				return i;
 			}
 		}
-		
 		return -1;
 	}
 	
@@ -359,6 +358,46 @@ public class Comparator {
 	/* “Two graphs are similar if their node/edge weight vectors are close” */
 	public double vectorSimilarity(Graph g1, Graph g2){
 		double degree = 0;
+		double[] qualities = getQualityVector(g1, g2);
+		int[][] edges = getAllSetOfEdges(g1, g2);
+		double sum = 0;
+		double x = 0;
+		double y = 0;
+		
+		for (int i = 0; i < edges.length; i++){ // MODULO!!!!!
+			x = lambda(edges[i][0], edges[i][1], g1);
+			y = lambda(edges[i][0], edges[i][1], g2);
+			sum +=  (x - y)/ (Math.max(x, y));
+		}
+		
+		degree = (double) (1 - sum)/edges.length;
+		return degree;
+	}
+	
+	private double lambda(int source, int target, Graph g){
+		double value = 0;
+		
+		return value;
+	}
+	
+	private int[][] getAllSetOfEdges(Graph g1, Graph g2){
+		int[][] edges = new int[g1.getNumbEdges() + g2.getNumbEdges()][2];
+		int[][] edges1 = g1.getEdges();
+		int[][] edges2 = g2.getEdges();
+		int i;
+		
+		for (i = 0; i < g1.getNumbEdges(); i++){
+			edges[i][0] = edges1[i][0];
+			edges[i][1] = edges[i][1];
+		}
+		for (int j = 0; j < g2.getNumbEdges(); j++){
+			edges[j+i][0] = edges2[j][0];
+			edges[j+i][1] = edges2[j][1];
+		}
+		return edges;
+	}
+	
+	private double[] getQualityVector(Graph g1, Graph g2){
 		ArrayList<Integer> g1_shared_nodes = new ArrayList<Integer>();
 		ArrayList<Integer> g2_shared_nodes = new ArrayList<Integer>();
 		
@@ -373,32 +412,7 @@ public class Comparator {
 		
 		double[] nodes_quality = new double[g1_shared_nodes.size()];
 		computeAverageScoresForVectors(g1_nodes_quality, g2_nodes_quality, nodes_quality);
-	
-		double sum = 0; // Sum for all edges in both graphs.
-		int[][] g1_edges = g1.getEdges();
-		int[][] g2_edges = g2.getEdges();
 		
-		return degree;
-	}
-	
-
-	
-	public double compareLevenshteinDistance(Graph g1, Graph g2){
-		double degree = 0;
-		
-		
-		
-		return degree;
-	}
-	
-	// Output: M1 = minimum DFS code for the graph; N = order of the node labels; E = order of edge labels
-	private void preprocessingLevenshtein(ArrayList<Graph> graphs){
-		Map<String, String> node_labels;
-		Map<String, String> edge_labels;
-		
-		for (Graph g : graphs){
-			
-		}
-		
+		return nodes_quality;
 	}
 }
