@@ -1,8 +1,7 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.Map;
 
 import model.Graph;
 
@@ -243,7 +242,7 @@ public class Comparator {
 		double sum = 0;
 		double score = 0;
 		double ranking_factor = 0;
-		double normalization_factor = 100;
+		double normalization_factor = 1; // -5 is the maximum value
 		int vertex = -1;
 		int index_in_array = -1;
 		
@@ -363,6 +362,7 @@ public class Comparator {
 		ArrayList<Integer> g1_shared_nodes = new ArrayList<Integer>();
 		ArrayList<Integer> g2_shared_nodes = new ArrayList<Integer>();
 		
+		// g1_shared_nodes and g2_shared_nodes contain the indices of the vertex shared, respectively.
 		getSharedVerticesIndex(g1, g2, g1_shared_nodes, g2_shared_nodes);
 		
 		double[] g1_nodes_quality = new double[g1_shared_nodes.size()];
@@ -373,10 +373,35 @@ public class Comparator {
 		
 		double[] nodes_quality = new double[g1_shared_nodes.size()];
 		computeAverageScoresForVectors(g1_nodes_quality, g2_nodes_quality, nodes_quality);
+	
+		double sum = 0; // Sum for all edges in both graphs.
+		int[][] g1_edges = g1.getEdges();
+		int[][] g2_edges = g2.getEdges();
 		
-		double lambda;
-		// Faltam as equacoes
+	
+		
 		
 		return degree;
+	}
+	
+
+	
+	public double compareLevenshteinDistance(Graph g1, Graph g2){
+		double degree = 0;
+		
+		
+		
+		return degree;
+	}
+	
+	// Output: M1 = minimum DFS code for the graph; N = order of the node labels; E = order of edge labels
+	private void preprocessingLevenshtein(ArrayList<Graph> graphs){
+		Map<String, String> node_labels;
+		Map<String, String> edge_labels;
+		
+		for (Graph g : graphs){
+			
+		}
+		
 	}
 }

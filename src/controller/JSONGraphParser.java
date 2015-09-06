@@ -71,7 +71,7 @@ public class JSONGraphParser {
         				JSONObject undirected_graph_object = o.getJSONObject(1);
         				Graph undirected_graph = new Graph();
         				try {
-							JSONArray links_array = directed_graph_object.getJSONArray("links");
+							JSONArray links_array = undirected_graph_object.getJSONArray("links");
 		
 							for (int i = 0; i < links_array.length(); i++){
 								JSONObject link = (JSONObject) links_array.get(i);
@@ -89,7 +89,7 @@ public class JSONGraphParser {
 							person.setUndirected_graph(undirected_graph);
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
-							System.out.println("ATENÇAO: Item sem links.");
+							System.out.println("Exception - Item with no links.");
 						}
         				
         				people.add(person);

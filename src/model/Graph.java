@@ -90,6 +90,10 @@ public class Graph {
 	public void setNumb_nodes(int n){
 		this.numb_nodes = n;
 	}
+	
+	public int[][] getEdges(){
+		return this.edges;
+	}
 
 
 	public void printInfo(){
@@ -299,5 +303,42 @@ public class Graph {
 		return current_pagerank;
 	}
 	
+	public int getNumberNodeOutlinks(int node){
+		int count = 0;
+		
+		for (int i = 0; i < this.numb_edges; i++){
+			if (this.edges[i][0] == node){
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	public int getNumberNodeInlinks(int node){
+	int count = 0;
+		
+		for (int i = 0; i < this.numb_edges; i++){
+			if (this.edges[i][1] == node){
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	// Considering undirected networks
+	public boolean containsEdge(int source,int target){
+		
+		for (int i = 0; i < this.numb_edges; i++){
+			if (this.edges[i][0] == source){
+				if (this.edges[i][1] == target){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 }
 

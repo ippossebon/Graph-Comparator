@@ -13,7 +13,7 @@ public class Person {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void setName(String name) {
@@ -22,7 +22,7 @@ public class Person {
 
 
 	public Graph getDirected_graph() {
-		return directed_graph;
+		return this.directed_graph;
 	}
 
 
@@ -32,7 +32,7 @@ public class Person {
 
 
 	public Graph getUndirected_graph() {
-		return undirected_graph;
+		return this.undirected_graph;
 	}
 
 
