@@ -159,51 +159,6 @@ public class Graph {
 		}
 		return -1;
 	}
-	
-	public void graphToDFSTree(){
-		ArrayList<Integer> stack = new ArrayList<Integer>();
-		int root = 0;
-		int visited_nodes[] = new int[this.numb_nodes];
-		stack.add(root);
-		Node tree = new Node(root);
-		
-		/*
-		while (root < this.numb_nodes){
-			for (int i = 0; i < this.numb_nodes; i++){
-				if (this.adjacency_matrix[root][i] == 1){
-					// There is a connection. Let's consider it as a child.
-					stack.add(i);
-					Node node = new Node(root, i);
-					tree.addChild(node);
-					root = i;
-				}
-			}
-			root++;
-		}
-		*/
-		
-	}
-	
-	public void testDFS(){
-		int visited_nodes[] = new int[this.numb_nodes];
-		
-		for (int i = 0; i < this.numb_nodes; i++){
-			System.out.println(this.getNameFromIndex(i));
-			//this.dfs(i, visited_nodes);
-		}
-		
-	}
-	
-	private void dfs(int node, int visited_nodes[]){
-		visited_nodes[node] = 1;
-		int i = 0;
-		for (i = 0; i < this.numb_nodes; i++){
-			if(this.adjacency_matrix[node][i] == 1 && (visited_nodes[i] == 0)){
-				System.out.println(this.getNameFromIndex(i));
-				dfs(i, visited_nodes);
-			}
-		}
-	}
     
 	public ArrayList<String> getNodeConnectionsNames(int index){
 		ArrayList<Integer> connections = new ArrayList<Integer>();
