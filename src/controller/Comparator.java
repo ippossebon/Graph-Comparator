@@ -241,7 +241,7 @@ public class Comparator {
 		double sum = 0;
 		double score = 0;
 		double ranking_factor = 0;
-		double normalization_factor = 1; // -5 is the maximum value (approx.)
+		double normalization_factor = 64; // -63.81625 is the maximum value (approx.)
 		int vertex = -1;
 		int index_in_array = -1;
 		
@@ -285,7 +285,8 @@ public class Comparator {
 			
 		}
 		sum = (double)2 * sum;
-		degree = (double)1 - (sum/normalization_factor);
+		sum = sum + 5;
+		degree = (double) 1 - (sum/normalization_factor);
 		return degree;
 	}
 	
@@ -357,26 +358,50 @@ public class Comparator {
 	
 	/* “Two graphs are similar if their node/edge weight vectors are close” */
 	public double vectorSimilarity(Graph g1, Graph g2){
+		ArrayList<Integer> g1_shared_nodes = new ArrayList<Integer>();
+		ArrayList<Integer> g2_shared_nodes = new ArrayList<Integer>();
 		double degree = 0;
-		double[] qualities = getQualityVector(g1, g2);
+		double[] qualities = getQualityVector(g1, g2, g1_shared_nodes, g2_shared_nodes);
 		int[][] edges = getAllSetOfEdges(g1, g2);
 		double sum = 0;
 		double x = 0;
 		double y = 0;
 		
-		for (int i = 0; i < edges.length; i++){ // MODULO!!!!!
-			x = lambda(edges[i][0], edges[i][1], g1);
-			y = lambda(edges[i][0], edges[i][1], g2);
+		// There are no nodes that these two graphs share.
+		if (qualities.length == 0){
+			return 0;
+		}
+		for (int i = 0; i < edges.length; i++){
+			x = Math.abs(lambda(edges[i][0], edges[i][1], g1, qualities, g1_shared_nodes));
+			y = lambda(edges[i][0], edges[i][1], g2, qualities, g2_shared_nodes);
 			sum +=  (x - y)/ (Math.max(x, y));
 		}
 		
 		degree = (double) (1 - sum)/edges.length;
+		degree = (double) degree/1.08; // Normalizes de value
+		if (degree < 0){
+			return 0;
+		}
+		
 		return degree;
 	}
 	
-	private double lambda(int source, int target, Graph g){
-		double value = 0;
+	private double lambda(int source, int target, Graph g, double[] qualities, ArrayList<Integer> g_shared_nodes){
+		int index = 0;
+		double numb_source_outlinks = g.getNumberNodeOutlinks(source);
 		
+		if (numb_source_outlinks == 0){
+			return 0;
+		}
+		
+		for (int i = 0; i < g_shared_nodes.size(); i++){
+			if (g_shared_nodes.get(i).equals(source)){
+				index = i;
+			}
+		}
+		// Multiplies per 1 because in this database of graphs, only single edges exist.
+		double value = (double)(qualities[index] * 1)/numb_source_outlinks;
+			
 		return value;
 	}
 	
@@ -397,9 +422,7 @@ public class Comparator {
 		return edges;
 	}
 	
-	private double[] getQualityVector(Graph g1, Graph g2){
-		ArrayList<Integer> g1_shared_nodes = new ArrayList<Integer>();
-		ArrayList<Integer> g2_shared_nodes = new ArrayList<Integer>();
+	private double[] getQualityVector(Graph g1, Graph g2, ArrayList<Integer> g1_shared_nodes, ArrayList<Integer> g2_shared_nodes){
 		
 		// g1_shared_nodes and g2_shared_nodes contain the indices of the vertex shared, respectively.
 		getSharedVerticesIndex(g1, g2, g1_shared_nodes, g2_shared_nodes);
@@ -407,8 +430,16 @@ public class Comparator {
 		double[] g1_nodes_quality = new double[g1_shared_nodes.size()];
 		double [] g2_nodes_quality = new double[g2_shared_nodes.size()];
 		
-		g1_nodes_quality = g1.calculateVectorPageRank(g1_shared_nodes);
-		g2_nodes_quality = g2.calculateVectorPageRank(g2_shared_nodes);
+		double[] g1_pagerank = g1.calculatePageRank();
+		double[] g2_pagerank = g2.calculatePageRank();
+		
+		// Gets the quality for each shared vertex.
+		for (int i = 0; i < g1_shared_nodes.size(); i++){
+			g1_nodes_quality[i] = g1_pagerank[g1_shared_nodes.get(i)];
+		}
+		for (int j = 0; j < g2_shared_nodes.size(); j++){
+			g2_nodes_quality[j] = g2_pagerank[g2_shared_nodes.get(j)];
+		}
 		
 		double[] nodes_quality = new double[g1_shared_nodes.size()];
 		computeAverageScoresForVectors(g1_nodes_quality, g2_nodes_quality, nodes_quality);

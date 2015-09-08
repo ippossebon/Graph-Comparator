@@ -221,43 +221,6 @@ public class Graph {
 		return current_pagerank;
 	}
 	
-	public double[] calculateVectorPageRank(ArrayList<Integer> nodes){
-		double[] previous_pagerank = new double[nodes.size()];
-		double[] current_pagerank = new double[nodes.size()];
-		
-		// Initialize
-		for (int i = 0; i < nodes.size(); i++){
-			previous_pagerank[i] = (double)1/this.numb_nodes;
-			current_pagerank[i] = (double)1/this.numb_nodes;
-		}
-		double lambda = 0.85; // Suggested value
-		double sum;
-		double count = 0;
-		
-		for (int iterations = 0; iterations < 10; iterations++){
-			previous_pagerank = current_pagerank.clone();
-			// Calculates the pagerank for each vertex
-			for (Integer i : nodes){
-				sum = 0;
-				count = 0;
-				for (int j = 0; j < this.numb_nodes; j++){
-					if (this.adjacency_matrix[j][i] == 1){
-						sum += (double)previous_pagerank[j];
-						count++;
-					}
-				}
-				if (count == 0){
-					current_pagerank[i] = (double)(1 - lambda)/this.numb_nodes;
-				}
-				else{
-					current_pagerank[i] = (double)(1 - lambda)/this.numb_nodes + (double)(lambda * (sum/count));
-				}
-			}
-			iterations++;
-		}
-		return current_pagerank;
-	}
-	
 	public int getNumberNodeOutlinks(int node){
 		int count = 0;
 		
