@@ -51,9 +51,9 @@ public class LevenshteinComparator extends Comparator{
 		
 		// Apply DFS for each of the vertices as root.
 		for (int i = 0; i < g.getNumb_nodes(); i++){
-			dfs = getDFSPath(i, g);
-			dfs_code = convertDFSCode(dfs, g);
-			all_codes.add(dfs_code.toString());
+			//dfs = getDFSPath(i, g);
+			//dfs_code = convertDFSCode(dfs, g);
+			//all_codes.add(dfs_code.toString());
 		}
 		
 		dfs_code = getMin(all_codes);
@@ -74,33 +74,46 @@ public class LevenshteinComparator extends Comparator{
 		return code;
 	}
 	
-	private int[] getDFSPath(int root, Graph g){
-		int[] path = new int[g.getNumb_nodes()];
-		int[] visited_nodes = new int[g.getNumb_nodes()];
+	private ArrayList<Integer> getDFSPath(int root, Graph g){
+		int[] fringe = new int[g.getNumb_nodes()];
+		ArrayList<Integer> path = new ArrayList<Integer>();
 		
-		this.dfs(root, visited_nodes, path, g.getAdjacency_matrix());
+		//this.dfs(root, fringe, path, g.getAdjacency_matrix());
 		
 		return path;
 	}
 	
 	
-	public void testDFS(){
-		//int visited_nodes[] = new int[this.numb_nodes];
+	public void testDFS(Graph g){
+		ArrayList<Integer> fringe = new ArrayList<Integer>();
+		ArrayList<Integer> path = new ArrayList<Integer>();
+		this.dfs(0, fringe, path, g.getAdjacency_matrix());
 		
-		//for (int i = 0; i < this.numb_nodes; i++){
-			//System.out.println(this.getNameFromIndex(i));
-			//this.dfs(i, visited_nodes);
-		//}
-		
+		// Print results
+		for (Integer i : path){
+			System.out.println(i);
+		}
 	}
 	
-	private void dfs(int node, int visited_nodes[], int[] path, int[][] adjacency_matrix){
-		visited_nodes[node] = 1;
+	private void dfs(int node, ArrayList<Integer> fringe, ArrayList<Integer> path, int[][] adjacency_matrix){
+		fringe.add(node);
+		path.add(node);
 		int i = 0;
-		for (i = 0; i < path.length; i++){
-			if(adjacency_matrix[node][i] == 1 && (visited_nodes[i] == 0)){
-				dfs(i, visited_nodes, path, adjacency_matrix);
+		
+		if (fringe.isEmpty()){
+			return;
+		}
+		
+		for (i = 0; i < adjacency_matrix.length; i++){
+			if(adjacency_matrix[node][i] == 1 && (! fringe.contains(i))){
+				dfs(i, fringe, path, adjacency_matrix);
 			}
+			else if (i == adjacency_matrix.length && adjacency_matrix[node][i] == 0){
+				// Se o node em questao nao tem filhos, voltamos para o ultimo da fringe, removendo o atual.
+				fringe.remove(node);
+				dfs(fringe.get(fringe.size() -1), fringe, path, adjacency_matrix);
+			}
+			
 		}
 	}
 }

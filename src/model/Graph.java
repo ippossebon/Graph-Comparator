@@ -36,7 +36,7 @@ public class Graph {
 		}
 	}
 	
-	public void createAdjacencyMatrix(){
+	public void createAdjacencyMatrixDirectedGraph(){
 		initializeMatrix();
 		
 		for (int i = 0; i < this.numb_edges; i++){
@@ -44,6 +44,18 @@ public class Graph {
 			int target = this.edges[i][1];
 			
 			this.adjacency_matrix[source][target] = 1;
+		}
+	}
+	
+	public void createAdjacencyMatrixUndirectedGraph(){
+		initializeMatrix();
+		
+		for (int i = 0; i < this.numb_edges; i++){
+			int source = this.edges[i][0];
+			int target = this.edges[i][1];
+			
+			this.adjacency_matrix[source][target] = 1;
+			this.adjacency_matrix[target][source] = 1;
 		}
 	}
 

@@ -13,13 +13,8 @@ public class Main {
 	public static void main(String args[]){
 		JSONGraphParser parser = new JSONGraphParser();
 		ApplicationFrame frame;
+		initialize(parser);
 		
-		parser.execute();
-		System.out.println("Number of graphs: " + parser.getGraphs().size());
-		
-		for (Graph g : parser.getGraphs()){
-			g.createAdjacencyMatrix();
-		}
 		ArrayList<String> graphs1 = new ArrayList<String>();
 		ArrayList<String> graphs2 = new ArrayList<String>();
 		
@@ -119,7 +114,7 @@ public class Main {
 		DefaultTableModel dft = new DefaultTableModel();
 		
 		for (Graph g : parser.getNetworks()){
-			g.createAdjacencyMatrix();
+			g.createAdjacencyMatrixDirectedGraph();
 		}
 		
 		ArrayList<String> nets1 = new ArrayList<String>();
@@ -161,5 +156,21 @@ public class Main {
 		frame = new ApplicationFrame(directed_networks_table, undirected_networks_table, big_networks_table);
 		frame.setVisible(true);
 		
+		LevenshteinComparator c = new LevenshteinComparator();
+		c.testDFS(parser.getPeople().get(3).getUndirected_graph());
+	}
+	
+	private static void initialize(JSONGraphParser parser){
+		
+		parser.execute();
+		System.out.println("Number of graphs: " + parser.getGraphs().size());
+		
+		for (int i = 0; i < parser.getPeople().size(); i++){
+			parser.getPeople().get(i).getDirected_graph().createAdjacencyMatrixDirectedGraph();
+		}
+		
+		for (int j = 0; j < parser.getPeople().size(); j++){
+			parser.getPeople().get(j).getUndirected_graph().createAdjacencyMatrixUndirectedGraph();
+		}
 	}
 }
