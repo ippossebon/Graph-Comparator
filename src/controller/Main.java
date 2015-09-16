@@ -153,17 +153,25 @@ public class Main {
 		dft.addColumn("Vector similarity", results_vector_similarity.toArray());
 		big_networks_table.setModel(dft);
 		
-		frame = new ApplicationFrame(directed_networks_table, undirected_networks_table, big_networks_table);
-		frame.setVisible(true);
+		//frame = new ApplicationFrame(directed_networks_table, undirected_networks_table, big_networks_table);
+		//frame.setVisible(true);
 		
-		LevenshteinComparator c = new LevenshteinComparator();
-		c.testDFS(parser.getPeople().get(3).getUndirected_graph());
+		ArrayList<Graph> all_networks = createNetworksArray(parser);
+		
+		if (all_networks.isEmpty()){
+			System.out.println("Error: array that contains all networks is empty.");
+		}
+		else{
+			double[][] similarity_matrix = createSimilarityMatrix(comparator, all_networks);
+			int network_edges = countTotalNumberEdges(all_networks);
+			double r = 0.75;
+			Clustering clustering = new Clustering(all_networks, similarity_matrix, r, network_edges);
+			clustering.run();
+		}
 	}
 	
 	private static void initialize(JSONGraphParser parser){
-		
 		parser.execute();
-		System.out.println("Number of graphs: " + parser.getGraphs().size());
 		
 		for (int i = 0; i < parser.getPeople().size(); i++){
 			parser.getPeople().get(i).getDirected_graph().createAdjacencyMatrixDirectedGraph();
@@ -172,5 +180,41 @@ public class Main {
 		for (int j = 0; j < parser.getPeople().size(); j++){
 			parser.getPeople().get(j).getUndirected_graph().createAdjacencyMatrixUndirectedGraph();
 		}
+	}
+	
+	private static ArrayList<Graph> createNetworksArray(JSONGraphParser parser){
+		ArrayList<Graph> networks = new ArrayList<Graph>();
+		
+		for (int i = 0; i < (int)parser.getPeople().size(); i++){
+			networks.add(parser.getPeople().get(i).getDirected_graph());
+			networks.add(parser.getPeople().get(i).getUndirected_graph());
+		}
+		for (int i = 0; i < (int)parser.getNetworks().size(); i++){
+			networks.add(parser.getNetworks().get(i));
+		}
+		
+		return networks;
+	}
+	
+	private static double[][] createSimilarityMatrix(Comparator comparator, ArrayList<Graph> networks){
+		double[][] similarity_matrix = new double[networks.size()][networks.size()];
+		
+		for (int i = 0; i < networks.size(); i++){
+			for (int j = 0; j < networks.size(); j++){
+				similarity_matrix[i][j] = comparator.vertexRankingComparison(networks.get(i), networks.get(j));
+			}
+		}
+		
+		return similarity_matrix;
+	}
+	
+	private static int countTotalNumberEdges(ArrayList<Graph> list){
+		int counter = 0;
+		
+		for (Graph g : list){
+			counter += g.getNumbEdges();
+		}
+		
+		return counter;
 	}
 }

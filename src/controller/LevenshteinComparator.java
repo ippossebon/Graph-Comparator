@@ -87,11 +87,13 @@ public class LevenshteinComparator extends Comparator{
 	public void testDFS(Graph g){
 		ArrayList<Integer> fringe = new ArrayList<Integer>();
 		ArrayList<Integer> path = new ArrayList<Integer>();
-		this.dfs(0, fringe, path, g.getAdjacency_matrix());
+		this.dfs(4, fringe, path, g.getAdjacency_matrix());
+		
+		
 		
 		// Print results
-		for (Integer i : path){
-			System.out.println(i);
+		for (Integer node : path){
+			System.out.println(node);
 		}
 	}
 	
