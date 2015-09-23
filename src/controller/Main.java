@@ -36,7 +36,7 @@ public class Main {
 			graphs1.add(parser.getPeople().get(i).getName());
 			graphs2.add(parser.getPeople().get(i+1).getName());
 			
-			degree = comparator.myCompare(parser.getPeople().get(i).getDirected_graph(), parser.getPeople().get(i+1).getDirected_graph());
+			degree = comparator.simpleCompare(parser.getPeople().get(i).getDirected_graph(), parser.getPeople().get(i+1).getDirected_graph());
 			simple_comparison_results.add(degree);
 			
 			degree = comparator.twoStepsComparison(parser.getPeople().get(i).getDirected_graph(), parser.getPeople().get(i+1).getDirected_graph());
@@ -78,7 +78,7 @@ public class Main {
 			graphs1.add(parser.getPeople().get(i).getName());
 			graphs2.add(parser.getPeople().get(i+1).getName());
 			
-			degree = comparator.myCompare(parser.getPeople().get(i).getUndirected_graph(), parser.getPeople().get(i).getUndirected_graph());
+			degree = comparator.simpleCompare(parser.getPeople().get(i).getUndirected_graph(), parser.getPeople().get(i).getUndirected_graph());
 			simple_comparison_results2.add(degree);
 			
 			degree = comparator.twoStepsComparison(parser.getPeople().get(i).getUndirected_graph(), parser.getPeople().get(i+1).getUndirected_graph());
@@ -129,7 +129,7 @@ public class Main {
 			nets1.add(parser.getNetworks().get(i).getId());
 			nets2.add(parser.getNetworks().get(i+1).getId());
 			
-			degree = comparator.myCompare(parser.getNetworks().get(i), parser.getNetworks().get(i+1));
+			degree = comparator.simpleCompare(parser.getNetworks().get(i), parser.getNetworks().get(i+1));
 			results_simple_compare.add(degree);
 			
 			degree = comparator.twoStepsComparison(parser.getNetworks().get(i), parser.getNetworks().get(i+1));
@@ -156,16 +156,17 @@ public class Main {
 		//frame = new ApplicationFrame(directed_networks_table, undirected_networks_table, big_networks_table);
 		//frame.setVisible(true);
 		
+		/* Clustering */
 		ArrayList<Graph> all_networks = createNetworksArray(parser);
-		
 		if (all_networks.isEmpty()){
 			System.out.println("Error: array that contains all networks is empty.");
 		}
 		else{
 			double[][] similarity_matrix = createSimilarityMatrix(comparator, all_networks);
-			int network_edges = countTotalNumberEdges(all_networks);
-			double r = 0.75;
-			Clustering clustering = new Clustering(all_networks, similarity_matrix, r, network_edges);
+			System.out.println(similarity_matrix[0][0]);
+			
+			double r = 0.3; // Value considering the two steps algorithm.
+			Clustering clustering = new Clustering(all_networks, similarity_matrix, r);
 			clustering.run();
 		}
 	}
@@ -201,20 +202,10 @@ public class Main {
 		
 		for (int i = 0; i < networks.size(); i++){
 			for (int j = 0; j < networks.size(); j++){
-				similarity_matrix[i][j] = comparator.vertexRankingComparison(networks.get(i), networks.get(j));
+				similarity_matrix[i][j] = comparator.twoStepsComparison(networks.get(i), networks.get(j));
 			}
 		}
 		
 		return similarity_matrix;
-	}
-	
-	private static int countTotalNumberEdges(ArrayList<Graph> list){
-		int counter = 0;
-		
-		for (Graph g : list){
-			counter += g.getNumbEdges();
-		}
-		
-		return counter;
 	}
 }

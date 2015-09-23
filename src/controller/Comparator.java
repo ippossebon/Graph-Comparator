@@ -18,7 +18,7 @@ public class Comparator {
 	 * 			- store its connections in 'connections2'.
 	 * 		- compare 'connections' and 'connections2': for each similar connection: +1.
 	 * Returns the degree of similiarity between two graphs. */
-	public double myCompare(Graph g1, Graph g2){
+	public double simpleCompare(Graph g1, Graph g2){
 	double degree = 0;
 	String g1_nodes[][] = g1.getNodes();
 		
@@ -33,7 +33,7 @@ public class Comparator {
 				connections_names2 = g2.getNodeConnectionsNames(similar_node_index);
 		
 				// Evaluate similarity between its connections.
-				degree = myEvaluate(connections_names, connections_names2)/ ((g1.getNumbEdges() + g2.getNumbEdges())/2);
+				degree = simpleEvaluate(connections_names, connections_names2)/ ((g1.getNumbEdges() + g2.getNumbEdges())/2);
 			}
 		}
 		return degree;
@@ -48,7 +48,7 @@ public class Comparator {
 		if (similar_nodes.size() < comparison_factor){
 			return 0;
 		}
-		return myCompare(g1, g2);
+		return simpleCompare(g1, g2);
 	}
 	
 	/* Method from "Web graph similarity for anomaly detection", Vertex/edge overlap (VEO).
@@ -61,6 +61,7 @@ public class Comparator {
 		return similarity_degree/12;
 	}
 	
+	/* Get the similar nodes' names from two given graphs. */
 	private ArrayList<String> getSimilarNodes(Graph g1, Graph g2){
 		ArrayList<String> similar_nodes = new ArrayList<String>();
 		String g1_nodes[][] = g1.getNodes();
@@ -68,7 +69,6 @@ public class Comparator {
 		
 		for (int i = 0; i < g1.getNumb_nodes(); i++){
 			String name1 = g1_nodes[i][0];
-			
 			for (int j = 0; j <g2.getNumb_nodes(); j++){
 				String name2 = g2_nodes[j][0];
 				
@@ -80,7 +80,8 @@ public class Comparator {
 		return similar_nodes;
 	}
 	
-	private double myEvaluate(ArrayList<String> nodes1, ArrayList<String> nodes2){
+	/* For each similar node from two graphs, one point. This value will later be normalized in order to be in the range [0,1]. */
+	private double simpleEvaluate(ArrayList<String> nodes1, ArrayList<String> nodes2){
 		double degree = 0;
 		
 		for (String node : nodes1){
@@ -97,8 +98,6 @@ public class Comparator {
 	private int existsInGraph(String name, Graph g){
 		for (int i = 0; i < g.getNumb_nodes(); i++){
 			String nodes[][] = g.getNodes();
-			
-			// If the node exists in the graph, return its index
 			if (nodes[i][0].equals(name)){
 				return i;
 			}
@@ -108,7 +107,6 @@ public class Comparator {
 	
 	private int getNumberOfCommonNodes(Graph g1, Graph g2){
 		int numb_common_nodes = 0;
-		
 		for (int i = 0; i < g1.getNumb_nodes(); i++){
 			for (int j = 0; j < g2.getNumb_nodes(); j++){
 				if (g1.getNameFromIndex(i).equals(g2.getNameFromIndex(j))){
@@ -119,9 +117,9 @@ public class Comparator {
 		return numb_common_nodes;
 	}
 	
+	/* Returns the number os common strings in two given arrays.*/
 	private int countCommonStrings(ArrayList<String> array_list1, ArrayList<String> array_list2){
 		int counter = 0;
-		
 		for (String s : array_list1){
 			for (String t : array_list2){
 				if (s.equals(t)){
@@ -133,6 +131,7 @@ public class Comparator {
 	}
 	
 	
+	/* Returns the number of common edges in two given graphs. */
 	private int getNumberOfCommonEdges(Graph g1, Graph g2){
 		int numb_common_edges = 0;
 		ArrayList<String> connections_names = new ArrayList<String>();
@@ -150,6 +149,7 @@ public class Comparator {
 		return numb_common_edges;
 	}
 	
+	/* Sort two related arrays (relation = same index). */
 	private void sortTwoRelatedArrays(double[] scores, int[] vertices)
     {
         for(int i=0; i<scores.length; i++)
@@ -171,9 +171,9 @@ public class Comparator {
         }
     }
 
+	/* Returns an array with all vertices' indices, given the number of vertices.*/
 	private int[] createVerticesArray(int numb_vertices){
 		int[] array = new int[numb_vertices];
-		
 		for (int i = 0; i < numb_vertices; i++){
 			array[i] = i;
 		}
@@ -184,7 +184,6 @@ public class Comparator {
 		for (int i = 0; i < a.length; i++){
 			all.add(a[i]);
 		}
-		
 		for (int i = 0; i < b.length; i++){
 			all.add(b[i]);
 		}
@@ -227,6 +226,7 @@ public class Comparator {
 		return calculateSimilarityDegreeForVertexRanking(scores, vertices, g1, g2);
 	}
 	
+	/* Given the vertex number(id), returns its index on the array of vertices. */
 	private int getIndexFromVertex(int vertex, ArrayList<Integer> vertices){
 		for (int i = 0; i < vertices.size(); i++){
 			if (vertices.get(i)== vertex){
@@ -290,49 +290,9 @@ public class Comparator {
 		return degree;
 	}
 	
-	private int[][] concatenateEdgesArray(int[][] a, int[][] b){
-		int[][] edges = new int[a.length + b.length][2];
-		int i = 0;
-		
-		for (i = 0; i < a.length; i++){
-			edges[i][0] = a[i][0];
-			edges[i][1] = a[i][1];
-		}
-		for (int j = 0; i < b.length; i++){
-			edges[i+j][0] = b[j][0];
-			edges[i+j][1] = b[j][1];
-		}
-		
-		return edges;
-	}
-	
-	private int countOutlinks(int vertex, Graph g){
-		int outlinks = 0;
-		int[][] edges = g.getLinks();
-		
-		for (int i = 0; i < edges.length; i++){
-			if (edges[i][0] == vertex){
-				outlinks++;
-			}
-		}
-		return outlinks;
-	}
-	
-	private double calculateEdgeWeight(int vertex, int[] scores, Graph g){
-		double w = 0;
-		double score = scores[vertex];
-		double outlinks1 = 0;
-		double outlinks2 = 0;
-		
-		w = (score * outlinks1)/outlinks2;
-		
-		return w;
-	}
-	
+	/* Returns the vertices' index shared by G1 and G2. */
 	private void getSharedVerticesIndex(Graph g1, Graph g2, ArrayList<Integer> g1_similar_nodes, ArrayList<Integer> g2_similar_nodes){
-		// Get the vertices shared by G1 and G2.
-		ArrayList<String> similar_nodes_names = this.getSimilarNodes(g1, g2);
-				
+		ArrayList<String> similar_nodes_names = this.getSimilarNodes(g1, g2);		
 		String[][] g1_nodes = g1.getNodes();
 		String[][] g2_nodes = g2.getNodes();
 				
@@ -340,8 +300,7 @@ public class Comparator {
 			if (similar_nodes_names.contains(g1_nodes[i][0])){
 				g1_similar_nodes.add(i);
 			}
-		}
-				
+		}	
 		for (int j = 0; j < g2.getNumb_nodes(); j++){
 			if (similar_nodes_names.contains(g2_nodes[j][0])){
 				g2_similar_nodes.add(j);
@@ -349,8 +308,8 @@ public class Comparator {
 		}
 	}
 	
+	/* Used for quality vectors. */
 	private void computeAverageScoresForVectors(double[] v1, double[] v2, double[] result){
-		
 		for (int i= 0; i < v1.length; i++){
 			result[i] = (double) (v1[i] + v2[i])/2;
 		}
@@ -393,7 +352,6 @@ public class Comparator {
 		if (numb_source_outlinks == 0){
 			return 0;
 		}
-		
 		for (int i = 0; i < g_shared_nodes.size(); i++){
 			if (g_shared_nodes.get(i).equals(source)){
 				index = i;
