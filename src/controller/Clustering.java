@@ -1,46 +1,55 @@
 package controller;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import model.Graph;
 
-import org.jblas.ComplexDouble;
 import org.jblas.ComplexDoubleMatrix;
 import org.jblas.DoubleMatrix;
 import org.jblas.Eigen;
 
+import Jama.EigenvalueDecomposition;
+import Jama.Matrix;
+
 public class Clustering {
 	private double[][] similarity_matrix;
 	private double r = 0; // Threshold
-	private int[][] correlation_matrix; // Used instead of using an adjacency matrix. Matrix nxn where n(i,j) is the similary degree calculated for i and j.
+	private int[][] correlation_matrix = {{0, 1, 0, 0, 0}, {1, 0, 0, 0, 0}, {0, 0, 0, 1, 1}, {0, 0, 1, 0, 1}, {0, 0, 1, 1, 0}}; // Used instead of using an adjacency matrix. Matrix nxn where n(i,j) is the similary degree calculated for i and j.
 	private double[][] modularity_matrix;
-	private int network_number_edges = 0;
+	private int network_number_edges = 8; //0
 	private ArrayList<Graph> networks;
 
 	public Clustering(ArrayList<Graph> networks, double[][] similarity_matrix, double r){
 		this.setNetworks(networks);
 		this.setSimilarity_matrix(similarity_matrix);
 		this.setR(r);
-		this.setCorrelation_matrix(new int[similarity_matrix.length][similarity_matrix.length]);
-		this.setModularity_matrix(new double[similarity_matrix.length][similarity_matrix.length]);
+		//this.setCorrelation_matrix(new int[similarity_matrix.length][similarity_matrix.length]);
+		this.setModularity_matrix(new double[5][5]);
 	}
 	
 	public void run(){
-		createCorrelationMatrix();
+		//createCorrelationMatrix();
 		createModularityMatrix();
+		eigenvalueDecomposition();
 		
-		// The eigenvectors and its correspondents eigenvalues have the same index.
-		DoubleMatrix matrix = new DoubleMatrix(this.modularity_matrix);
-		List<Double> leading_eigenvector = getPrincipalEigenvector(matrix);
-		ComplexDoubleMatrix eigenvalues = Eigen.eigenvalues(matrix);
+	
+	}
+	
+	public void eigenvalueDecomposition(){
+		Matrix matrix = new Matrix(this.modularity_matrix);
+		EigenvalueDecomposition eigen = matrix.eig();
+		Matrix eigenvectors = eigen.getV();
 		
-		int max_index = getMaxIndex(matrix);
-		double eigenvalue = eigenvalues.getReal(max_index);
+		double[] real_part = eigen.getRealEigenvalues();
+		double[] imag_part = eigen.getImagEigenvalues();
 		
-		for (Double d : leading_eigenvector){
-			System.out.println(d);
-		}
+		double max = -500;
+		for (int i = 0; i < real_part.length; i++){
+			if (real_part[i] > max){
+				max = real_part[i];
+			}
+		}		
 	}
 	
 	/* - Two graphs are considered to be similar if their similarity degree is > r. 
@@ -62,7 +71,7 @@ public class Clustering {
 	private void createModularityMatrix(){
 		for (int i = 0; i < this.modularity_matrix.length; i++){
 			for (int j = 0; j < this.modularity_matrix.length; j++){
-				this.modularity_matrix[i][j] = this.correlation_matrix[i][j] - ((calculateDegree(i) * calculateDegree(j))/2*this.network_number_edges);
+				this.modularity_matrix[i][j] = this.correlation_matrix[i][j] - ((double)(calculateDegree(i) * calculateDegree(j))/this.network_number_edges);
 			}
 		}
 	}
@@ -76,34 +85,6 @@ public class Clustering {
 			}
 		}
 		return count;
-	}
-
-	private static List<Double> getPrincipalEigenvector(DoubleMatrix matrix) {
-	    int maxIndex = getMaxIndex(matrix);
-	    ComplexDoubleMatrix eigenVectors = Eigen.eigenvectors(matrix)[0];
-	    return getEigenVector(eigenVectors, maxIndex);
-	}
-
-	private static int getMaxIndex(DoubleMatrix matrix) {
-	    ComplexDouble[] doubleMatrix = Eigen.eigenvalues(matrix).toArray();
-	    int maxIndex = 0;
-	    for (int i = 0; i < doubleMatrix.length; i++){
-	        double newnumber = doubleMatrix[i].abs();
-	        if ((newnumber > doubleMatrix[maxIndex].abs())){
-	            maxIndex = i;
-	        }
-	    }
-	    return maxIndex;
-	}
-	 
-	private static List<Double> getEigenVector(ComplexDoubleMatrix eigenvector, int columnId) {
-	    ComplexDoubleMatrix column = eigenvector.getColumn(columnId);
-	 
-	    List<Double> values = new ArrayList<Double>();
-	    for (ComplexDouble value : column.toArray()) {
-	        values.add(value.abs()  );
-	    }
-	    return values;
 	}
 	
 	private void divideInTwo(){
@@ -135,6 +116,26 @@ public class Clustering {
 		this.correlation_matrix = correlation_matrix;
 	}
 	
+	
+	private void printDoubleMatrix(double[][] m){
+		for (int i = 0; i < m.length; i++){
+			for (int j = 0; j < m.length; j++){
+				System.out.print(m[i][j]);
+				System.out.print(" ");
+			}
+			System.out.println();
+		}
+	}
+	
+	private void printMatrix(double[][] m){
+		for (int i = 0; i < m.length; i++){
+			for (int j = 0; j < m.length; j++){
+				System.out.print(m[i][j]);
+				System.out.print(" ");
+			}
+			System.out.println();
+		}
+	}
 	
 	private void printMatrix(int[][] m){
 		for (int i = 0; i < m.length; i++){
