@@ -153,8 +153,8 @@ public class Main {
 		dft.addColumn("Vector similarity", results_vector_similarity.toArray());
 		big_networks_table.setModel(dft);
 		
-		//frame = new ApplicationFrame(directed_networks_table, undirected_networks_table, big_networks_table);
-		//frame.setVisible(true);
+		frame = new ApplicationFrame(directed_networks_table, undirected_networks_table, big_networks_table);
+		frame.setVisible(true);
 		
 		/* Clustering */
 		ArrayList<Graph> all_networks = createNetworksArray(parser);

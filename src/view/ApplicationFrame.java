@@ -18,6 +18,7 @@ public class ApplicationFrame extends JFrame {
 	private JPanel contentPane;
 
 	public ApplicationFrame(JTable t1, JTable t2, JTable t3) {
+		super("Graph comparator");
 		setBounds(100, 100, 901, 459);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
