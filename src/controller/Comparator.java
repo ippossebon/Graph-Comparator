@@ -18,7 +18,7 @@ public class Comparator {
 	 * 			- store its connections in 'connections2'.
 	 * 		- compare 'connections' and 'connections2': for each similar connection: +1.
 	 * Returns the degree of similiarity between two graphs. */
-	public double simpleCompare(Graph g1, Graph g2){
+	public double simpleComparison(Graph g1, Graph g2){
 	double degree = 0;
 	String g1_nodes[][] = g1.getNodes();
 		
@@ -48,7 +48,7 @@ public class Comparator {
 		if (similar_nodes.size() < comparison_factor){
 			return 0;
 		}
-		return simpleCompare(g1, g2);
+		return simpleComparison(g1, g2);
 	}
 	
 	/* Method from "Web graph similarity for anomaly detection", Vertex/edge overlap (VEO).
