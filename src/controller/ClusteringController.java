@@ -23,21 +23,48 @@ public final class ClusteringController {
 		similarity_matrix = smatrix;
 		r = r_value;
 		
-		setModularity_matrix(new double[smatrix.length][smatrix.length]);
-		setCorrelation_matrix(new int[smatrix.length][smatrix.length]);
-		ClusteringController.s = new double[smatrix.length];
+		setModularity_matrix(new double[smatrix.length][smatrix.length]); 
+		setCorrelation_matrix(new int[smatrix.length][smatrix.length]); 
+		ClusteringController.s = new double[smatrix.length]; 
 		ClusteringController.indices = new ArrayList<Integer>();
 		createIndicesArray();
 	}	
 	
 	private void createIndicesArray(){
-		for (int i = 0; i < networks.size(); i++){
+		for (int i = 0; i < networks.size(); i++){ //test: 20
 			indices.add(i);
 		}
 	}
 	
+	private void test(){
+		int[][] m = {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0},
+				{0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0},
+				{0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
+				{0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
+				{0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
+				{0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+				{0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+				{0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0},
+				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+				{0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0},
+				{0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0}};
+		setCorrelation_matrix(m);
+	}
+	
 	public void run(){
 		createCorrelationMatrix();
+		//test();
+		//network_number_edges = 32;
+		
 		createModularityMatrix();
 		leading_eigenvector = MatrixOperations.getLeadingEigenvector(getModularity_matrix());
 		root = new Group(getCorrelation_matrix(), getModularity_matrix(), null, s, network_number_edges);
@@ -46,6 +73,8 @@ public final class ClusteringController {
 		ArrayList<Integer> s2 = new ArrayList<Integer>();
 		ArrayList<Integer> indices_group1 = new ArrayList<Integer>();
 		ArrayList<Integer> indices_group2 = new ArrayList<Integer>();
+		System.out.println("Numero de networks: " + networks.size() + " S size = " + s.length);
+		
 		GroupOperations.divideInTwo(s, leading_eigenvector, indices, s1, s2, indices_group1, indices_group2);
 		
 		IntegerHolder numb_edges1 = new IntegerHolder(0);
