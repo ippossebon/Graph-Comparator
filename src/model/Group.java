@@ -3,9 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-import controller.ClusteringController;
-import controller.GroupOperations;
-import controller.MatrixOperations;
+import utilities.GroupOperations;
+import utilities.MatrixOperations;
+import clustering.ClusteringController;
 
 public class Group{
 	private int[][] correlation_matrix;

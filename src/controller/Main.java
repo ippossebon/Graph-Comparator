@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import networkscomparison.Comparator;
+import clustering.ClusteringController;
+import dataprocessing.JSONGraphParser;
 import model.Graph;
 import view.ApplicationFrame;
 

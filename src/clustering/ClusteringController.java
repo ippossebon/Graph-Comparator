@@ -1,7 +1,9 @@
-package controller;
+package clustering;
 
 import java.util.ArrayList;
 
+import utilities.GroupOperations;
+import utilities.MatrixOperations;
 import model.Graph;
 import model.Group;
 import model.IntegerHolder;

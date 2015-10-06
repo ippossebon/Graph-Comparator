@@ -1,4 +1,4 @@
-package controller;
+package networkscomparison;
 
 import java.util.ArrayList;
 import java.util.Map;

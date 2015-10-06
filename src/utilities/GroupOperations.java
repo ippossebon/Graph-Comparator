@@ -1,4 +1,4 @@
-package controller;
+package utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +90,21 @@ public final class GroupOperations {
 	/* Divide the vector v in two vectors, s1 and s2, accordingly to the sings of the leading eigenvector. 
 	 * indices_group ArrayList, at the end of the execution, will contain the indices that belong to the correspondent group.*/
 	public static void divideInTwo(double[] s, double[] leading_eigenvector, ArrayList<Integer> current_indices, ArrayList<Integer> s1, ArrayList<Integer> s2, ArrayList<Integer> indices_group1, ArrayList<Integer> indices_group2){
-		for (Integer i : current_indices){
+		for (int i = 0; i < current_indices.size(); i++){
+			if (leading_eigenvector[i] >= 0){
+				s[i] = 1;
+				s1.add(1);
+				indices_group1.add(current_indices.get(i));
+			}
+			else
+			{
+				s[i] = -1;
+				s2.add(-1);
+				indices_group2.add(current_indices.get(i));
+			}
+		}
+		
+		/*for (Integer i : current_indices){
 			if (leading_eigenvector[i] >= 0){
 				s[i] = 1;
 				s1.add(1);
@@ -102,5 +116,6 @@ public final class GroupOperations {
 				indices_group2.add(i);
 			}
 		}
+		*/
 	}
 }
