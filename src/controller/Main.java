@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import model.Graph;
+import model.Network;
 import networkscomparison.Comparator;
+import view.ApplicationFrame;
 import clustering.ClusteringController;
 import dataprocessing.JSONGraphParser;
-import model.Graph;
-import view.ApplicationFrame;
 
 public class Main {
 
@@ -166,10 +167,16 @@ public class Main {
 			System.out.println("Error: array that contains all networks is empty.");
 		}
 		else{
-			double[][] similarity_matrix = createSimilarityMatrix(comparator, all_networks);
+			double[][] similarity_matrix_all_networks = createSimilarityMatrix(comparator, all_networks);
 			double r = 0.15; // Value considering the vector similarity
-			ClusteringController clustering_controller = new ClusteringController(all_networks, similarity_matrix, r);
+			ClusteringController clustering_controller = new ClusteringController(similarity_matrix_all_networks, r, all_networks.size());
+			System.out.println("Clustering for all networks in database.");
 			clustering_controller.run();
+			
+			double[][] similarity_matrix_big_networks = createSimilarityMatrixBigNetworks(comparator, parser.getNetworks());
+			ClusteringController cc2 = new ClusteringController(similarity_matrix_big_networks, r, parser.getNetworks().size());
+			System.out.println("Clustering for all big networks.");
+			cc2.run();
 		}
 		
 		
@@ -202,6 +209,18 @@ public class Main {
 	}
 	
 	private static double[][] createSimilarityMatrix(Comparator comparator, ArrayList<Graph> networks){
+		double[][] similarity_matrix = new double[networks.size()][networks.size()];
+		
+		for (int i = 0; i < networks.size(); i++){
+			for (int j = 0; j < networks.size(); j++){
+				similarity_matrix[i][j] = comparator.vectorSimilarity(networks.get(i), networks.get(j));
+			}
+		}
+		
+		return similarity_matrix;
+	}
+	
+	private static double[][] createSimilarityMatrixBigNetworks(Comparator comparator, ArrayList<Network> networks){
 		double[][] similarity_matrix = new double[networks.size()][networks.size()];
 		
 		for (int i = 0; i < networks.size(); i++){

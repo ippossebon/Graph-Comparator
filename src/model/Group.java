@@ -40,8 +40,8 @@ public class Group{
 		int[][] correlation_matrix_group1 = GroupOperations.calculateGroupCorrelationMatrix(indices_group1, numb_edges1, ClusteringController.similarity_matrix, ClusteringController.r);
 		int[][] correlation_matrix_group2 = GroupOperations.calculateGroupCorrelationMatrix(indices_group2, numb_edges2, ClusteringController.similarity_matrix, ClusteringController.r);
 		
-		double deltaQ1 = GroupOperations.calculateModularityContribution(indices_group1, this.s, ClusteringController.getCorrelation_matrix(), numb_edges1.getValue(), ClusteringController.getModularity_matrix());
-		double deltaQ2 = GroupOperations.calculateModularityContribution(indices_group2, this.s, ClusteringController.getCorrelation_matrix(), numb_edges2.getValue(), ClusteringController.getModularity_matrix());
+		double deltaQ1 = GroupOperations.calculateModularityContribution(indices_group1, ClusteringController.getCorrelation_matrix(), numb_edges1.getValue(), ClusteringController.getModularity_matrix());
+		double deltaQ2 = GroupOperations.calculateModularityContribution(indices_group2, ClusteringController.getCorrelation_matrix(), numb_edges2.getValue(), ClusteringController.getModularity_matrix());
 		
 		double[][] mm1 = GroupOperations.calculateGeneralizedModularityMatrix(indices_group1, correlation_matrix_group1, ClusteringController.getModularity_matrix());
 		double[][] mm2 = GroupOperations.calculateGeneralizedModularityMatrix(indices_group2, correlation_matrix_group2, ClusteringController.getModularity_matrix());

@@ -23,13 +23,26 @@ public final class GroupOperations {
 		return correlation;
 	}
 	
-	public static double[][] calculateGeneralizedModularityMatrix(List<Integer>indices, int[][] correlation_matrix, double[][] modularity_matrix){
-		double[][] modularity = new double[modularity_matrix.length][modularity_matrix.length];
-		double sum_group_values = calculateSumOfGroupValues(indices, modularity_matrix);
+	private static double sumGroupValuesInRow(int row, List<Integer> indices, double[][] modularity_matrix){
+		double sum = 0;
 		
 		for (int i = 0; i < modularity_matrix.length; i++){
-			for (int j = 0; j < modularity_matrix.length; j++){
-				modularity[i][j] = (double)modularity_matrix[i][j] - (double)kroneckerDelta(i,j) * sum_group_values;
+			if (indices.contains(modularity_matrix[row][i])){
+				sum += modularity_matrix[row][i];
+			}
+		}
+		
+		return sum;
+	}
+	
+	public static double[][] calculateGeneralizedModularityMatrix(List<Integer>indices, int[][] correlation_matrix, double[][] modularity_matrix){
+		double[][] modularity = new double[indices.size()][indices.size()];
+		double sum_group_values_in_row = 0;
+		
+		for (int i = 0; i < indices.size(); i++){
+			for (int j = 0; j < indices.size(); j++){
+				sum_group_values_in_row = sumGroupValuesInRow(i, indices, modularity_matrix);
+				modularity[i][j] = (double)modularity_matrix[indices.get(i)][indices.get(j)] - kroneckerDelta(i,j) * sum_group_values_in_row;
 			}
 		}
 		return modularity;
@@ -56,8 +69,9 @@ public final class GroupOperations {
 	}
 	
 	// Calculates correlation matrix and generalized modularity matrix for the group
-	public static double calculateModularityContribution(ArrayList<Integer> indices, double[] s, int[][] original_correlation_matrix, int numb_edges, double[][] modularity_matrix){
+	public static double calculateModularityContribution(ArrayList<Integer> indices, int[][] original_correlation_matrix, int numb_edges, double[][] modularity_matrix){
 		double[][] generalized_modularity_matrix = calculateGeneralizedModularityMatrix(indices, original_correlation_matrix, modularity_matrix);
+		double[] s = MatrixOperations.getLeadingEigenvector(generalized_modularity_matrix);
 		double[][] sT = MatrixOperations.transposeVector(s);
 		double[][] s_matrix = MatrixOperations.convertVectorToMatrix(s);
 				
@@ -103,19 +117,5 @@ public final class GroupOperations {
 				indices_group2.add(current_indices.get(i));
 			}
 		}
-		
-		/*for (Integer i : current_indices){
-			if (leading_eigenvector[i] >= 0){
-				s[i] = 1;
-				s1.add(1);
-				indices_group1.add(i);
-			}
-			else{
-				s[i] = -1;
-				s2.add(-1);
-				indices_group2.add(i);
-			}
-		}
-		*/
 	}
 }

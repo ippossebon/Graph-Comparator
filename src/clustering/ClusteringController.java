@@ -2,14 +2,12 @@ package clustering;
 
 import java.util.ArrayList;
 
-import utilities.GroupOperations;
-import utilities.MatrixOperations;
-import model.Graph;
 import model.Group;
 import model.IntegerHolder;
+import utilities.GroupOperations;
+import utilities.MatrixOperations;
 
 public final class ClusteringController {
-	public static ArrayList<Graph> networks;
 	private static double[][] modularity_matrix;
 	public static double[][] similarity_matrix;
 	private static int[][] correlation_matrix;
@@ -19,21 +17,21 @@ public final class ClusteringController {
 	public static int network_number_edges;
 	public static double[] leading_eigenvector;
 	public static ArrayList<Integer> indices;
+	public static int numb_items;
 	
-	public ClusteringController(ArrayList<Graph> nets, double[][] smatrix, double r_value){
-		networks = nets;
+	public ClusteringController(double[][] smatrix, double r_value, int n_items){
 		similarity_matrix = smatrix;
 		r = r_value;
-		
-		setModularity_matrix(new double[smatrix.length][smatrix.length]); 
-		setCorrelation_matrix(new int[smatrix.length][smatrix.length]); 
-		ClusteringController.s = new double[smatrix.length]; 
+		numb_items = n_items;
+		setModularity_matrix(new double[numb_items][numb_items]);
+		setCorrelation_matrix(new int[numb_items][numb_items]);
+		ClusteringController.s = new double[numb_items];
 		ClusteringController.indices = new ArrayList<Integer>();
 		createIndicesArray();
 	}	
 	
 	private void createIndicesArray(){
-		for (int i = 0; i < networks.size(); i++){ //test: 20
+		for (int i = 0; i < numb_items; i++){
 			indices.add(i);
 		}
 	}
@@ -75,7 +73,6 @@ public final class ClusteringController {
 		ArrayList<Integer> s2 = new ArrayList<Integer>();
 		ArrayList<Integer> indices_group1 = new ArrayList<Integer>();
 		ArrayList<Integer> indices_group2 = new ArrayList<Integer>();
-		System.out.println("Numero de networks: " + networks.size() + " S size = " + s.length);
 		
 		GroupOperations.divideInTwo(s, leading_eigenvector, indices, s1, s2, indices_group1, indices_group2);
 		
@@ -85,8 +82,8 @@ public final class ClusteringController {
 		int[][] correlation_matrix_group1 = GroupOperations.calculateGroupCorrelationMatrix(indices_group1, numb_edges1, similarity_matrix, r);
 		int[][] correlation_matrix_group2 = GroupOperations.calculateGroupCorrelationMatrix(indices_group2, numb_edges2, similarity_matrix, r);
 		
-		double deltaQ1 = GroupOperations.calculateModularityContribution(indices_group1, s, getCorrelation_matrix(), numb_edges1.getValue(), getModularity_matrix());
-		double deltaQ2 = GroupOperations.calculateModularityContribution(indices_group2, s, getCorrelation_matrix(), numb_edges2.getValue(), getModularity_matrix());
+		double deltaQ1 = GroupOperations.calculateModularityContribution(indices_group1, getCorrelation_matrix(), numb_edges1.getValue(), getModularity_matrix());
+		double deltaQ2 = GroupOperations.calculateModularityContribution(indices_group2, getCorrelation_matrix(), numb_edges2.getValue(), getModularity_matrix());
 		
 		double[][] mm1 = GroupOperations.calculateGeneralizedModularityMatrix(indices_group1, correlation_matrix_group1, getModularity_matrix());
 		double[][] mm2 = GroupOperations.calculateGeneralizedModularityMatrix(indices_group2, correlation_matrix_group2, getModularity_matrix());
@@ -155,7 +152,6 @@ public final class ClusteringController {
 	}
 	
 	public static void updateS(ArrayList<Integer> indices){
-		System.out.println("Entrou no update");
 		for (Integer i : indices){
 			s[i] = (double) s[i] /2;
 		}
