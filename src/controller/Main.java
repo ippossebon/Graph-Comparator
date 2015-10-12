@@ -163,20 +163,22 @@ public class Main {
 		/* Clustering */
 		
 		ArrayList<Graph> all_networks = createNetworksArray(parser);
+		
 		if (all_networks.isEmpty()){
 			System.out.println("Error: array that contains all networks is empty.");
 		}
 		else{
 			double[][] similarity_matrix_all_networks = createSimilarityMatrix(comparator, all_networks);
 			double r = 0.15; // Value considering the vector similarity
-			ClusteringController clustering_controller = new ClusteringController(similarity_matrix_all_networks, r, all_networks.size());
+			ClusteringController clustering_controller = new ClusteringController(similarity_matrix_all_networks, r, 10);
 			System.out.println("Clustering for all networks in database.");
 			clustering_controller.run();
-			
+			/*
 			double[][] similarity_matrix_big_networks = createSimilarityMatrixBigNetworks(comparator, parser.getNetworks());
 			ClusteringController cc2 = new ClusteringController(similarity_matrix_big_networks, r, parser.getNetworks().size());
 			System.out.println("Clustering for all big networks.");
 			cc2.run();
+			*/
 		}
 		
 		

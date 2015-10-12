@@ -26,6 +26,7 @@ public class Group{
 	}
 	
 	public void applyClusteringAlgorithm(){
+		boolean done = true;
 		double[] leading_eigenvector = MatrixOperations.getLeadingEigenvector(this.generalized_modularity_matrix);
 		
 		ArrayList<Integer> s1 = new ArrayList<Integer>();
@@ -33,44 +34,52 @@ public class Group{
 		ArrayList<Integer> indices_group1 = new ArrayList<Integer>();
 		ArrayList<Integer> indices_group2 = new ArrayList<Integer>();
 		GroupOperations.divideInTwo(this.s, leading_eigenvector, this.indices, s1, s2, indices_group1, indices_group2);
-		
-		IntegerHolder numb_edges1 = new IntegerHolder(0);
-		IntegerHolder numb_edges2 = new IntegerHolder(0);
-		
-		int[][] correlation_matrix_group1 = GroupOperations.calculateGroupCorrelationMatrix(indices_group1, numb_edges1, ClusteringController.similarity_matrix, ClusteringController.r);
-		int[][] correlation_matrix_group2 = GroupOperations.calculateGroupCorrelationMatrix(indices_group2, numb_edges2, ClusteringController.similarity_matrix, ClusteringController.r);
-		
-		double deltaQ1 = GroupOperations.calculateModularityContribution(indices_group1, ClusteringController.getCorrelation_matrix(), numb_edges1.getValue(), ClusteringController.getModularity_matrix());
-		double deltaQ2 = GroupOperations.calculateModularityContribution(indices_group2, ClusteringController.getCorrelation_matrix(), numb_edges2.getValue(), ClusteringController.getModularity_matrix());
-		
-		double[][] mm1 = GroupOperations.calculateGeneralizedModularityMatrix(indices_group1, correlation_matrix_group1, ClusteringController.getModularity_matrix());
-		double[][] mm2 = GroupOperations.calculateGeneralizedModularityMatrix(indices_group2, correlation_matrix_group2, ClusteringController.getModularity_matrix());
-		
-		double[] leading_eigenvector1 = MatrixOperations.getLeadingEigenvector(mm1);
-		double[] leading_eigenvector2 = MatrixOperations.getLeadingEigenvector(mm2);
-		
-		boolean done = true;
-		if (deltaQ1 > 0 && MatrixOperations.containsPositiveValue(leading_eigenvector1)){
+	
+		/* Avoids having empty groups and groups that are equal to the current one. */
+		if (!indices_group1.isEmpty() && isNewGroup(indices_group1)){
+			IntegerHolder numb_edges1 = new IntegerHolder(0);
+			int[][] correlation_matrix_group1 = GroupOperations.calculateGroupCorrelationMatrix(indices_group1, numb_edges1, ClusteringController.similarity_matrix, ClusteringController.r);
+			double deltaQ1 = GroupOperations.calculateModularityContribution(indices_group1, ClusteringController.getCorrelation_matrix(), numb_edges1.getValue(), ClusteringController.getModularity_matrix());
+			double[][] mm1 = GroupOperations.calculateGeneralizedModularityMatrix(indices_group1, correlation_matrix_group1, ClusteringController.getModularity_matrix());
+			double[] leading_eigenvector1 = MatrixOperations.getLeadingEigenvector(mm1);
 			
-			double[] sv = MatrixOperations.convertArrayListToVector(s1);
-			Group g = new Group(correlation_matrix_group1, mm1, indices_group1, sv, numb_edges1.getValue());	
-			this.addChild(g);
-			ClusteringController.updateS(indices_group1);
-			g.applyClusteringAlgorithm();
-			done = false;
+			if (deltaQ1 > 0 && MatrixOperations.containsPositiveValue(leading_eigenvector1)){
+				double[] sv = MatrixOperations.convertArrayListToVector(s1);
+				Group g = new Group(correlation_matrix_group1, mm1, indices_group1, sv, numb_edges1.getValue());	
+				this.addChild(g);
+				ClusteringController.updateS(indices_group1);
+				g.applyClusteringAlgorithm();
+				done = false;
+			}
 		}
-		if (deltaQ2 > 0 && MatrixOperations.containsPositiveValue(leading_eigenvector2)){
+		if (! indices_group2.isEmpty() && isNewGroup(indices_group2)){
+			IntegerHolder numb_edges2 = new IntegerHolder(0);
+			int[][] correlation_matrix_group2 = GroupOperations.calculateGroupCorrelationMatrix(indices_group2, numb_edges2, ClusteringController.similarity_matrix, ClusteringController.r);
+			double deltaQ2 = GroupOperations.calculateModularityContribution(indices_group2, ClusteringController.getCorrelation_matrix(), numb_edges2.getValue(), ClusteringController.getModularity_matrix());
+			double[][] mm2 = GroupOperations.calculateGeneralizedModularityMatrix(indices_group2, correlation_matrix_group2, ClusteringController.getModularity_matrix());
+			double[] leading_eigenvector2 = MatrixOperations.getLeadingEigenvector(mm2);
 			
-			double[] sv = MatrixOperations.convertArrayListToVector(s2);
-			Group g = new Group(correlation_matrix_group2, mm2, indices_group2, sv, numb_edges2.getValue());	
-			this.addChild(g);
-			ClusteringController.updateS(indices_group2);
-			g.applyClusteringAlgorithm();
-			done = false;
+			if (deltaQ2 > 0 && MatrixOperations.containsPositiveValue(leading_eigenvector2)){
+				double[] sv = MatrixOperations.convertArrayListToVector(s2);
+				Group g = new Group(correlation_matrix_group2, mm2, indices_group2, sv, numb_edges2.getValue());	
+				this.addChild(g);
+				ClusteringController.updateS(indices_group2);
+				g.applyClusteringAlgorithm();
+				done = false;
+			}
 		}
 		if (done){
 			MatrixOperations.printVector(ClusteringController.s);
 		}
+	}
+	
+	private boolean isNewGroup(ArrayList<Integer> ind){
+		for (Integer i : this.indices){
+			if (! ind.contains(i)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public int[][] getCorrelation_matrix() {

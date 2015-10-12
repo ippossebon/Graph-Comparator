@@ -112,6 +112,7 @@ public final class MatrixOperations {
 	}
 	
 	public static void printVector(double[] v){
+		System.out.println();
 		for (int i = 0; i < v.length; i++){
 			System.out.print(v[i] + " ");
 		}
